@@ -25,13 +25,11 @@ namespace GoldBar
         {
             var path = Directory.GetParent(Environment.CurrentDirectory).Parent.Parent.FullName;
             driverChrome = new ChromeDriver(path + @"\drivers\");
-            driverChrome.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
             //driverFireFox = new FirefoxDriver(path + @"\drivers\");
-            //driverFireFox.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
             //driverEdge = new EdgeDriver(path + @"\drivers\");
-            //driverEdge.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
 
             driver = driverChrome;
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
         }
 
         [OneTimeTearDown]
