@@ -18,6 +18,7 @@ namespace GoldBar
         WebDriver driverChrome;
         WebDriver driverFireFox;
         WebDriver driverEdge;
+        WebDriver driver;
 
         [OneTimeSetUp]
         public void Setup()
@@ -26,32 +27,36 @@ namespace GoldBar
             driverChrome = new ChromeDriver(path + @"\drivers\");
             driverChrome.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
             //driverFireFox = new FirefoxDriver(path + @"\drivers\");
+            //driverFireFox.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
             //driverEdge = new EdgeDriver(path + @"\drivers\");
+            //driverEdge.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+
+            driver = driverChrome;
         }
 
         [OneTimeTearDown]
         public void Teardown()
         {
-            driverChrome.Close();
+            driver.Close();
         }
 
         [Test]
         public void findFakeGoldBar()
         {
             string correctBar;
-            driverChrome.Navigate().GoToUrl("http://sdetchallenge.fetch.com/");
-            Assert.IsTrue(driverChrome.FindElement(By.Id("reset")).Displayed);
-            var weights = new WeightsPage(driverChrome);
+            driver.Navigate().GoToUrl("http://sdetchallenge.fetch.com/");
+            Assert.IsTrue(driver.FindElement(By.Id("reset")).Displayed);
+            var weights = new WeightsPage(driver);
 
             var startingNumbers = new List<string>() { "0", "1", "2", "3", "5", "6", "7", "8" };
             weights.fillInValues(startingNumbers);
 
-            driverChrome.FindElement(By.Id("weigh")).Click();
-            var weightResult = driverChrome.FindElement(By.XPath("//div[@class='game-info']/ol/li")).Text;
+            driver.FindElement(By.Id("weigh")).Click();
+            var weightResult = driver.FindElement(By.XPath("//div[@class='game-info']/ol/li")).Text;
 
             if (weightResult.Contains("="))
             {
-                driverChrome.FindElement(By.Id("coin_4")).Click();
+                driver.FindElement(By.Id("coin_4")).Click();
                 correctBar = "4";
             } else
             {
@@ -61,56 +66,56 @@ namespace GoldBar
 
                 if (weightResultsSplit[1].Equals("<"))
                 {
-                    driverChrome.FindElement(By.XPath("//button[text()='Reset']")).Click();
+                    driver.FindElement(By.XPath("//button[text()='Reset']")).Click();
                     weights.fillInValues(leftResult);
                 }
                 else
                 {
-                    driverChrome.FindElement(By.XPath("//button[text()='Reset']")).Click();
+                    driver.FindElement(By.XPath("//button[text()='Reset']")).Click();
                     weights.fillInValues(rightResult);
                 }
-                driverChrome.FindElement(By.Id("weigh")).Click();
+                driver.FindElement(By.Id("weigh")).Click();
                 
-                weightResult = driverChrome.FindElement(By.XPath("//div[@class='game-info']/ol/li/following-sibling::li")).Text;
+                weightResult = driver.FindElement(By.XPath("//div[@class='game-info']/ol/li/following-sibling::li")).Text;
                 weightResultsSplit = weightResult.Replace("[", string.Empty).Replace("]", string.Empty).Split(' ');
                 leftResult = weightResultsSplit[0].Split(',').ToList();
                 rightResult = weightResultsSplit[2].Split(',').ToList();
 
                 if (weightResult.Contains("<"))
                 {
-                    driverChrome.FindElement(By.XPath("//button[text()='Reset']")).Click();
+                    driver.FindElement(By.XPath("//button[text()='Reset']")).Click();
                     weights.fillInValues(leftResult);
                 }
                 else
                 {
-                    driverChrome.FindElement(By.XPath("//button[text()='Reset']")).Click();
+                    driver.FindElement(By.XPath("//button[text()='Reset']")).Click();
                     weights.fillInValues(rightResult);
                 }
-                driverChrome.FindElement(By.Id("weigh")).Click();
+                driver.FindElement(By.Id("weigh")).Click();
                 
-                weightResult = driverChrome.FindElement(By.XPath("//div[@class='game-info']/ol/li/following-sibling::li[2]")).Text;
+                weightResult = driver.FindElement(By.XPath("//div[@class='game-info']/ol/li/following-sibling::li[2]")).Text;
                 weightResultsSplit = weightResult.Replace("[", string.Empty).Replace("]", string.Empty).Split(' ');
                 leftResult = weightResultsSplit[0].Split(',').ToList();
                 rightResult = weightResultsSplit[2].Split(',').ToList();
 
                 if (weightResult.Contains("<"))
                 {
-                    driverChrome.FindElement(By.Id($"coin_{leftResult[0]}")).Click();
+                    driver.FindElement(By.Id($"coin_{leftResult[0]}")).Click();
                     correctBar = leftResult[0];
                 }
                 else
                 {
-                    driverChrome.FindElement(By.Id($"coin_{rightResult[0]}")).Click();
+                    driver.FindElement(By.Id($"coin_{rightResult[0]}")).Click();
                     correctBar = rightResult[0];
                 }
             }
 
-            var alertText = driverChrome.SwitchTo().Alert().Text;
+            var alertText = driver.SwitchTo().Alert().Text;
             Console.WriteLine(alertText);
             Assert.AreEqual("Yay! You find it!", alertText);
-            driverChrome.SwitchTo().Alert().Accept();
+            driver.SwitchTo().Alert().Accept();
 
-            var weightResults = driverChrome.FindElements(By.XPath("//ol/li"));
+            var weightResults = driver.FindElements(By.XPath("//ol/li"));
             foreach (var item in weightResults)
             {
                 Console.WriteLine(item.Text);
