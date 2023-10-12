@@ -106,15 +106,16 @@ namespace GoldBar
             }
 
             var alertText = driverChrome.SwitchTo().Alert().Text;
+            Console.WriteLine(alertText);
             Assert.AreEqual("Yay! You find it!", alertText);
             driverChrome.SwitchTo().Alert().Accept();
 
             var weightResults = driverChrome.FindElements(By.XPath("//ol/li"));
             foreach (var item in weightResults)
             {
-                System.Console.WriteLine(item.Text);
+                Console.WriteLine(item.Text);
             }
-            System.Console.WriteLine($"Correct bar number is {correctBar}");
+            Console.WriteLine($"Correct bar number is {correctBar}");
         }
     }
 }
