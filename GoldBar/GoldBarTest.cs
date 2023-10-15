@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GoldBar.PageObjects;
 using OpenQA.Selenium.Support.UI;
+using SeleniumExtras.PageObjects;
 
 namespace GoldBar
 {
@@ -19,6 +20,7 @@ namespace GoldBar
         WebDriver driverFireFox;
         WebDriver driverEdge;
         WebDriver driver;
+        WeightsPage weights;
 
         [OneTimeSetUp]
         public void Setup()
@@ -30,6 +32,8 @@ namespace GoldBar
 
             driver = driverChrome;
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+            driver.Navigate().GoToUrl("http://sdetchallenge.fetch.com/");
+            weights = new WeightsPage(driver);
         }
 
         [OneTimeTearDown]
@@ -42,8 +46,6 @@ namespace GoldBar
         public void findFakeGoldBar()
         {
             string correctBar;
-            var weights = new WeightsPage(driver);
-            driver.Navigate().GoToUrl("http://sdetchallenge.fetch.com/");
 
             var startingNumbers = weights.getBarNumbers();
 			var bars = weights.firstWeigh(startingNumbers);
