@@ -12,11 +12,15 @@ namespace GoldBar.PageObjects
     {
         protected WebDriver driver;
 
-        [FindsBy(How = How.Id, Using = "weigh")]
-        public WebElement WeighButton { get; set; }
+        public WebElement resetButton()
+        {
+            return (WebElement)driver.FindElement(By.XPath("//button[text()='Reset']"));
+        }
 
-        [FindsBy(How = How.XPath, Using = "//button[text()='Reset']")]
-        public WebElement ResetButton { get; set; }
+        public WebElement weighButton()
+        {
+            return (WebElement)driver.FindElement(By.Id("weigh"));
+        }
 
         public WeightsPage(WebDriver driver)
         {
@@ -55,7 +59,7 @@ namespace GoldBar.PageObjects
             var oddBar = new List<string>() { numbers[0] };
             numbers.Remove(numbers[0]);
             fillInValues(numbers);
-            driver.FindElement(By.Id("weigh")).Click();
+            weighButton().Click();
 
             var weightResult = driver.FindElement(By.XPath("//div[@class='game-info']/ol/li")).Text;
 
@@ -82,16 +86,14 @@ namespace GoldBar.PageObjects
         {
             List<string> lighterBars = new List<string>();
             var numberOfWeighsDone = driver.FindElements(By.XPath("//div[@class='game-info']/ol/li")).Count;
-            driver.FindElement(By.XPath("//button[text()='Reset']")).Click();
+            resetButton().Click();
             fillInValues(numbers);
-            driver.FindElement(By.Id("weigh")).Click();
+            weighButton().Click();
             var weightResult = driver.FindElement(By.XPath($"//div[@class='game-info']/ol/li[{numberOfWeighsDone + 1}]")).Text;
 
             var weightResultsSplit = weightResult.Replace("[", string.Empty).Replace("]", string.Empty).Split(' ');
             var leftResult = weightResultsSplit[0].Split(',').ToList();
             var rightResult = weightResultsSplit[2].Split(',').ToList();
-
-            driver.FindElement(By.XPath("//button[text()='Reset']")).Click();
 
             if (weightResult.Contains("<"))
             {
