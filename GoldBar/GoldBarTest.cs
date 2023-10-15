@@ -42,82 +42,26 @@ namespace GoldBar
         public void findFakeGoldBar()
         {
             string correctBar;
-            driver.Navigate().GoToUrl("http://sdetchallenge.fetch.com/");
-            Assert.IsTrue(driver.FindElement(By.Id("reset")).Displayed);
             var weights = new WeightsPage(driver);
+            driver.Navigate().GoToUrl("http://sdetchallenge.fetch.com/");
 
-            var startingNumbers = new List<string>() { "0", "1", "2", "3", "5", "6", "7", "8" };
-            weights.fillInValues(startingNumbers);
+            var startingNumbers = weights.getBarNumbers();
+			var bars = weights.firstWeigh(startingNumbers);
 
-            driver.FindElement(By.Id("weigh")).Click();
-            var weightResult = driver.FindElement(By.XPath("//div[@class='game-info']/ol/li")).Text;
-
-            if (weightResult.Contains("="))
+            if (bars.Count > 1)
             {
-                driver.FindElement(By.Id("coin_4")).Click();
-                correctBar = "4";
-            } else
-            {
-                var weightResultsSplit = weightResult.Replace("[", string.Empty).Replace("]", string.Empty).Split(' ');
-                var leftResult = weightResultsSplit[0].Split(',').ToList();
-                var rightResult = weightResultsSplit[2].Split(',').ToList();
-
-                if (weightResultsSplit[1].Equals("<"))
-                {
-                    driver.FindElement(By.XPath("//button[text()='Reset']")).Click();
-                    weights.fillInValues(leftResult);
-                }
-                else
-                {
-                    driver.FindElement(By.XPath("//button[text()='Reset']")).Click();
-                    weights.fillInValues(rightResult);
-                }
-                driver.FindElement(By.Id("weigh")).Click();
-                
-                weightResult = driver.FindElement(By.XPath("//div[@class='game-info']/ol/li/following-sibling::li")).Text;
-                weightResultsSplit = weightResult.Replace("[", string.Empty).Replace("]", string.Empty).Split(' ');
-                leftResult = weightResultsSplit[0].Split(',').ToList();
-                rightResult = weightResultsSplit[2].Split(',').ToList();
-
-                if (weightResult.Contains("<"))
-                {
-                    driver.FindElement(By.XPath("//button[text()='Reset']")).Click();
-                    weights.fillInValues(leftResult);
-                }
-                else
-                {
-                    driver.FindElement(By.XPath("//button[text()='Reset']")).Click();
-                    weights.fillInValues(rightResult);
-                }
-                driver.FindElement(By.Id("weigh")).Click();
-                
-                weightResult = driver.FindElement(By.XPath("//div[@class='game-info']/ol/li/following-sibling::li[2]")).Text;
-                weightResultsSplit = weightResult.Replace("[", string.Empty).Replace("]", string.Empty).Split(' ');
-                leftResult = weightResultsSplit[0].Split(',').ToList();
-                rightResult = weightResultsSplit[2].Split(',').ToList();
-
-                if (weightResult.Contains("<"))
-                {
-                    driver.FindElement(By.Id($"coin_{leftResult[0]}")).Click();
-                    correctBar = leftResult[0];
-                }
-                else
-                {
-                    driver.FindElement(By.Id($"coin_{rightResult[0]}")).Click();
-                    correctBar = rightResult[0];
-                }
+                bars = weights.performWeigh(bars);
             }
 
+            correctBar = bars[0];
+
+            weights.clickGoldBar(correctBar);
             var alertText = driver.SwitchTo().Alert().Text;
             Console.WriteLine(alertText);
             Assert.AreEqual("Yay! You find it!", alertText);
             driver.SwitchTo().Alert().Accept();
 
-            var weightResults = driver.FindElements(By.XPath("//ol/li"));
-            foreach (var item in weightResults)
-            {
-                Console.WriteLine(item.Text);
-            }
+            weights.reportWeighings();
             Console.WriteLine($"Correct bar number is {correctBar}");
         }
     }
