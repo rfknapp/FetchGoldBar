@@ -13,5 +13,4 @@ How to run the test:
 Note: You could press the hotkeys Ctrl+R and then T to run the test
 
 Future Enhancements:
-- Move the logic of the weighing into a recursive function
 - Query the user to find out which browser they wish to use instead of defaulting to Chrome
