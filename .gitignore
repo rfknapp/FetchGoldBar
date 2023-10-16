@@ -32,3 +32,10 @@ GoldBar/obj/
 *.FileListAbsolute.txt
 *.g.props
 *.g.targets
+
+#########
+# Allow #
+#########
+!/GoldBar/drivers/chromedriver.exe
+!/GoldBar/drivers/geckodriver.exe
+!/GoldBar/drivers/msedgedriver.exe
